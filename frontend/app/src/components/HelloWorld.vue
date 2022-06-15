@@ -13,7 +13,7 @@ export default {
     }
   },
   mounted(){
-    axios.get(`${URL}tasks`).then(response =>{
+    axios.get(`${URL}task1`).then(response =>{
         
         this.response = response
         
