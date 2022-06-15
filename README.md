@@ -1,4 +1,4 @@
-# CORSの勉強
+# ログインページの作成
 
 ## # 環境構築
 
@@ -19,5 +19,6 @@ frontend:Vue.js (port=80)
 backend:Go (port=5050)
 ```
 #### 参考URL
-[CORSに関して](https://zenn.dev/minominominoru/articles/42e78ff60ee242)  
-[GoのHandlerについて](https://journal.lampetty.net/entry/understanding-http-handler-in-go)
+[UI参考](https://qiita.com/yatsurugi55/items/c867131016e37e71ee04) 
+[...の使い方](https://qiita.com/Yashy/items/a02b74a00136dc5a42c4) 
+
