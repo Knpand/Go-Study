@@ -10,6 +10,8 @@ services:
             - ./backend/init:/init
         ports:
             - "5050:5050"
+        links: 
+            - database
         stdin_open: true
         tty: true
 
@@ -25,3 +27,33 @@ services:
             - '80:8080'
         stdin_open: true
         tty: true
+
+      database:
+        platform: linux/x86_64
+        image: mysql:5.7
+        container_name: database
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: database
+            MYSQL_USER: light
+            MYSQL_PASSWORD: light
+            TZ: 'Asia/Tokyo'
+        volumes:
+            - ./database/data:/var/lib/mysql
+            - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
+            - ./database/sqls:/docker-entrypoint-initdb.d
+        ports:
+            - 3306:3306
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+
+
+      phpmyadmin:
+          container_name: phpmyadmin
+          image: phpmyadmin/phpmyadmin
+          environment:
+              - PMA_ARBITRARY=1
+              - PMA_HOSTS=database
+              - PMA_USER=light
+              - PMA_PASSWORD=light
+          ports:
+              - 8000:80
