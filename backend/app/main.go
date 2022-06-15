@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 	"app/handler"
-	"app/middleware"
+	// "app/middleware"
 )
 
 type Task struct {
@@ -93,8 +93,8 @@ func login_handler(w http.ResponseWriter, r *http.Request) error{
 func main() {
 	//handler.Handle 引数がnilじゃいけない理由
 	//handler.Handleでmidllewareとhandler回してる
-	
-	http.HandleFunc("/", handler.Handle(middleware.PostOnlyMiddleware,login_handler))
+
+	http.HandleFunc("/", handler.Handle(login_handler))
 	log.Fatal(http.ListenAndServe(":5050", nil))
 
 }

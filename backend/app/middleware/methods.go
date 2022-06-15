@@ -28,3 +28,17 @@ func GetOnlyMiddleware(w http.ResponseWriter, r *http.Request) error {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	return errors.New("METHOD NOT ALLOWED")
 }
+
+func GetandPostMiddleware(w http.ResponseWriter, r *http.Request) error {
+	if r.Method == "GET" {
+		return nil
+	}
+	if r.Method == "POST" {
+		return nil
+	}
+	if r.Method == "DELATE" {
+		return nil
+	}
+	w.WriteHeader(http.StatusMethodNotAllowed)
+	return errors.New("GET OR POST NOT ALLOWED")
+}

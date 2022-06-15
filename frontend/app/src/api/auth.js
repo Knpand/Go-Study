@@ -26,7 +26,7 @@ export default {
       .catch(error => { throw error })
   },
   logout: () => {
-    config.method = 'delete'
+    config.method = 'post'
     return axios.request(config)
       .then(res => res)
       .catch(error => { throw error })
