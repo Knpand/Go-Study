@@ -1,0 +1,27 @@
+version: "3"
+services:
+      server:
+        container_name: backend
+        build: ./backend
+        volumes:
+            - type: bind
+              source: ./backend/app
+              target: /app
+            - ./backend/init:/init
+        ports:
+            - "5050:5050"
+        stdin_open: true
+        tty: true
+
+      frontend:
+        container_name: frontend
+        build: ./frontend
+        volumes:
+            - type: bind
+              source: ./frontend/app
+              target: /app
+            - ./frontend/init:/init
+        ports:
+            - '80:8080'
+        stdin_open: true
+        tty: true
