@@ -19,5 +19,5 @@ frontend:Vue.js (port=80)
 backend:Go (port=5050)
 ```
 #### 参考URL
-[CORSに関して](https://zenn.dev/minominominoru/articles/42e78ff60ee242)
+[CORSに関して](https://zenn.dev/minominominoru/articles/42e78ff60ee242)  
 [GoのHandlerについて](https://journal.lampetty.net/entry/understanding-http-handler-in-go)
