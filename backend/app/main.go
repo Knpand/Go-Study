@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"time"
 	"app/handler"
+	"golang.org/x/crypto/bcrypt"
+	"database/sql"
 	// "app/middleware"
 )
 
@@ -61,12 +63,6 @@ func handler1(w http.ResponseWriter, r *http.Request) {
 
 
 func login_handler(w http.ResponseWriter, r *http.Request) error{
-	//CORSの設定
-	// w.Header().Set("Access-Control-Allow-Headers", "*")
-	// w.Header().Set("Access-Control-Allow-Origin", "*")
-	// w.Header().Set( "Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS" )
-
-	
 	fmt.Print("checkpoint")
 	user:=User{Token:"1234567890abcdef",UserID:1}
 	jsonData,err:=json.Marshal(user)
@@ -85,16 +81,50 @@ func login_handler(w http.ResponseWriter, r *http.Request) error{
 
 		return nil
 	}
-	
+}
+
+func signup_handler(w http.ResponseWriter, r *http.Request) error{
+	fmt.Print("checkpoint")
+
+	db, err := sql.Open("mysql", "light:light@tcp(localhost:3306)/database")
+	// Formデータを取得.
+	email :=  r.FormValue("email")
+	password :=  r.FormValue("password")
+
+	hash:= Hash_password(password)
+	fmt.Print("checkpoint")
+	// dbに登録
+	_, err = db.Exec(
+		"INSERT INTO students(password, email) VALUES (?,?)",
+		hash,
+		email,
+	)
+
+	if err != nil {
+		user:=User{Token:"1234567890abcdef",UserID:1}
+		jsonData,_:=json.Marshal(user)
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonData)
+		defer db.Close()
+		return nil
+	}
+	defer db.Close()
+
+		return nil
 	
 }
 
-
+func Hash_password(password string) string {
+	new_password, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(new_password)
+}
 func main() {
 	//handler.Handle 引数がnilじゃいけない理由
 	//handler.Handleでmidllewareとhandler回してる
 
 	http.HandleFunc("/", handler.Handle(login_handler))
+	http.HandleFunc("/signup", handler.Handle(signup_handler))
+
 	log.Fatal(http.ListenAndServe(":5050", nil))
 
 }

@@ -25,6 +25,21 @@ export default {
     })
       .catch(error => { throw error })
   },
+  signup: (authInfo) => {
+    console.log("signup check")
+    console.log(authInfo)
+    config.method = 'post'
+    config.data = authInfo
+    config.url = 'http://localhost:5050/signup'
+
+    return axios.request(config)
+      .then(res => {
+        console.log("res check")
+        console.log(res)
+        return res
+    })
+      .catch(error => { throw error })
+  },
   logout: () => {
     config.method = 'post'
     return axios.request(config)

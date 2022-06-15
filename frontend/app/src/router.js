@@ -5,7 +5,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Login from './components/LoginView.vue'
 import Top from './components/TopView.vue'
-import { authorizeToken } from './guards'
+import Signup from './components/SignupView.vue'
+// import { authorizeToken } from './guards'
 
 
 const routes = [
@@ -22,6 +23,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/signup',
+    name: 'Signup',
+    component: Signup
   }
 ]
 
@@ -29,6 +35,6 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
-router.beforeEach(authorizeToken)
+// router.beforeEach(authorizeToken)
 
 export default router
