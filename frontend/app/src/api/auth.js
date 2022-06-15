@@ -21,7 +21,7 @@ export default {
       .then(res => {
         console.log("res check")
         console.log(res)
-        
+        return res
     })
       .catch(error => { throw error })
   },
