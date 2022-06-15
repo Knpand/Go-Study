@@ -19,6 +19,6 @@ frontend:Vue.js (port=80)
 backend:Go (port=5050)
 ```
 #### 参考URL
-[UI参考](https://qiita.com/yatsurugi55/items/c867131016e37e71ee04)  
+[Goを使ったJWT](https://qiita.com/akubi0w1/items/dee1000699a3e9d9b2e3)  
 [...の使い方](https://qiita.com/Yashy/items/a02b74a00136dc5a42c4) 
 
