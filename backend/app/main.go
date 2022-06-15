@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"app/handler"
+	"app/middleware"
 )
 
 type Task struct {
@@ -14,6 +16,11 @@ type Task struct {
 	Title   string    `json:"title"`
 	Content string    `json:"content"`
 	DueDate time.Time `json:"due_date"`
+}
+
+type User struct {
+	Token string `json:"token"`
+	UserID int `json:"id"`
 }
 
 var tasks = []Task{{
@@ -33,13 +40,12 @@ var tasks = []Task{{
 	DueDate: time.Now(),
 }}
 
-
 func handler1(w http.ResponseWriter, r *http.Request) {
 	//CORSの設定
 	w.Header().Set("Access-Control-Allow-Headers", "*")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set( "Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS" )
-
+	fmt.Print("checkpoint")
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
 	if err := enc.Encode(&tasks); err != nil {
@@ -54,41 +60,63 @@ func handler1(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func main() {
+func login_handler(w http.ResponseWriter, r *http.Request) error{
+	//CORSの設定
+	// w.Header().Set("Access-Control-Allow-Headers", "*")
+	// w.Header().Set("Access-Control-Allow-Origin", "*")
+	// w.Header().Set( "Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS" )
 
-	//http.ServeMux:URLにハンドラをバインド
-	router := http.NewServeMux()
-
-	//http.HandlerFunc
-	// ・第１引数にTCPのアドレス
-	// ・第２引数にhttp Handler
-	//　ServeHTTPを実装
-	router.Handle("/task1", http.HandlerFunc(handler1))
-
-	//http.ServeMux.HandlerFunc
-	//HandleFuncのショートカット的な
-	router.HandleFunc("/tasks", func(w http.ResponseWriter, r *http.Request) {
+	
+	fmt.Print("checkpoint")
+	user:=User{Token:"1234567890abcdef",UserID:1}
+	jsonData,err:=json.Marshal(user)
+	if err != nil {
+		fmt.Print("checkpoint")
+		return err
+	}else{
+		fmt.Print("checkpoint")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "Hello World")
-		var buf bytes.Buffer
-		enc := json.NewEncoder(&buf)
-		if err := enc.Encode(&tasks); err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(buf.String())
+		w.Write(jsonData)
+
+		// Formデータを取得.
+		form := r.PostForm
+		
+		fmt.Print(form)
+
+		return nil
+	}
 	
-		_, err := fmt.Fprint(w, buf.String())
-		if err != nil {
-			return
-		}
-	})
-
-
 	
-    //ListenAndServe:サーバの起動
-	// ・第１引数にTCPのアドレス
-	// ・第２引数にhttp Handler
-
-	//log.Fatal:errorになるとexitする
-	log.Fatal(http.ListenAndServe(":5050", router))	
 }
+
+
+func main() {
+	//handler.Handle 引数がnilじゃいけない理由
+	//handler.Handleでmidllewareとhandler回してる
+	
+	http.HandleFunc("/", handler.Handle(middleware.PostOnlyMiddleware,login_handler))
+	log.Fatal(http.ListenAndServe(":5050", nil))
+
+}
+
+
+
+
+/////////////////////////////////////
+//////
+//////GETとPOST書き分けるときに使える
+//////
+/////////////////////////////////////
+
+
+// func handleOnlyPost(w http.ResponseWriter, r *http.Request) {
+
+//     // HTTPメソッドをチェック（POSTのみ許可）
+//     if r.Method != http.MethodPost {
+//         w.WriteHeader(http.StatusMethodNotAllowed) // 405
+//         w.Write([]byte("POSTだけだよー"))
+//         return
+//     }
+
+//     w.Write([]byte("OK"))
+// }
