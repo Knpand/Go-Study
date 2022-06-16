@@ -1,5 +1,4 @@
 package handler
-
 import (
 	"encoding/json"
 	"log"
@@ -7,24 +6,19 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"	//これをimportしないとDB接続できない
 	"app/modules"
+	"app/models"
 	"golang.org/x/crypto/bcrypt"
 	"fmt"
+
 	// "app/middlewar
+
 )
 
 
-type User struct {
-	Email string `json:"email"`
-	Password string `json:"password"`
-}
-
-type Response struct{
-	Status string `json:"status"`
-	Data string `json:"data"`
-}
 func Login_handler(w http.ResponseWriter, r *http.Request) error{
 	// Formデータを取得
-	var user User
+	var user models.User
+	var user_id int
 	var db_userpassword string
 	json.NewDecoder(r.Body).Decode(&user)
 	
@@ -33,10 +27,10 @@ func Login_handler(w http.ResponseWriter, r *http.Request) error{
 	}else{
 	defer db.Close()
 	// dbからデータ抜き出し
-	err := db.QueryRow(`SELECT password FROM students WHERE email =?`,user.Email).Scan(&db_userpassword)
+	err := db.QueryRow(`SELECT id,password FROM students WHERE email =?`,user.Email).Scan(&user_id,&db_userpassword)
 	if err != nil {
 		log.Print(err)
-		  w.WriteHeader(403)
+		w.WriteHeader(403)
 		return nil
 	}
 	//パスワード比較
@@ -44,14 +38,18 @@ func Login_handler(w http.ResponseWriter, r *http.Request) error{
 		  w.WriteHeader(403)
 		  return nil
 	}else{
-		fmt.Print("passcheck OK")
-		response := Response {
+		// JWT
+		token,err:=modules.CreateToken(user_id)
+		if err !=nil{
+			w.WriteHeader(403)
+			return nil
+		}
+		response := models.Response {
 			Status: "ok",
 			Data: "success",
+			Jwt:token,
 		  }
-		
 		json, _ := json.Marshal(response)
-		log.Print(json)
 		w.WriteHeader(200)
 		w.Header().Set("Content-Type","application/json; charset=utf-8")
 		w.Write(json)
@@ -68,7 +66,7 @@ func Signup_handler(w http.ResponseWriter, r *http.Request) error{
 		// fmt.Println(w, h)
 	
 	// Formデータを取得
-		var user User
+		var user models.User
 		json.NewDecoder(r.Body).Decode(&user)
 		hash_password:= modules.Hash_password(user.Password)
 		
@@ -81,17 +79,32 @@ func Signup_handler(w http.ResponseWriter, r *http.Request) error{
 			log.Print(err)
 			return nil
 		}
-	
 		_, err = stmt.Exec(hash_password,user.Email)
-	
 		if err != nil {
 			return nil
 		}
 		defer db.Close()
-	
 		}
 			return nil
-		
 	}
 
 	
+
+	/////////////////////////////////////
+//////
+//////GETとPOST書き分けるときに使える
+//////
+/////////////////////////////////////
+
+
+// func handleOnlyPost(w http.ResponseWriter, r *http.Request) {
+
+//     // HTTPメソッドをチェック（POSTのみ許可）
+//     if r.Method != http.MethodPost {
+//         w.WriteHeader(http.StatusMethodNotAllowed) // 405
+//         w.Write([]byte("POSTだけだよー"))
+//         return
+//     }
+
+//     w.Write([]byte("OK"))
+// }

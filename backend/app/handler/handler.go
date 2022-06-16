@@ -16,3 +16,4 @@ func Handle(handlers ...func(w http.ResponseWriter, r *http.Request) error) func
 		}
 	}
 }
+
