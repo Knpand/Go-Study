@@ -122,8 +122,8 @@ func main() {
 	//handler.Handle 引数がnilじゃいけない理由
 	//handler.Handleでmidllewareとhandler回してる
 
-	http.HandleFunc("/", handler.Handle(login_handler))
-	http.HandleFunc("/signup", handler.Handle(signup_handler))
+	http.HandleFunc("/", handler.Handle(handler.Login_handler))
+	http.HandleFunc("/signup", handler.Handle(handler.Signup_handler))
 
 	log.Fatal(http.ListenAndServe(":5050", nil))
 
