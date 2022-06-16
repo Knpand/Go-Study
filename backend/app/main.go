@@ -22,8 +22,8 @@ type Task struct {
 }
 
 type User struct {
-	Token string `json:"token"`
-	UserID int `json:"id"`
+	Email string `json:"email"`
+	Password string `json:"password"`
 }
 
 var tasks = []Task{{
@@ -65,15 +65,9 @@ func handler1(w http.ResponseWriter, r *http.Request) {
 
 func login_handler(w http.ResponseWriter, r *http.Request) error{
 	fmt.Print("checkpoint")
-	user:=User{Token:"1234567890abcdef",UserID:1}
-	jsonData,err:=json.Marshal(user)
-	if err != nil {
+
 		fmt.Print("checkpoint")
-		return err
-	}else{
-		fmt.Print("checkpoint")
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonData)
+		// w.WriteHeader(http.StatusOK)
 
 		// Formデータを取得.
 		form := r.PostForm
@@ -82,65 +76,40 @@ func login_handler(w http.ResponseWriter, r *http.Request) error{
 
 		return nil
 	}
-}
+
 
 func signup_handler(w http.ResponseWriter, r *http.Request) error{
-	h := r.Header
-	fmt.Fprintln(w, h)
+// httpリクエストヘッダ確認
+	// h := r.Header
+	// fmt.Println(w, h)
+	// h := r.Header.Get("Accept-Encoding")
+	// fmt.Println(w, h)
+
+// Formデータを取得
+	var user User
+	json.NewDecoder(r.Body).Decode(&user)
 	fmt.Print("checkpoint1")
-	user:=User{Token:"1234567890abcdef",UserID:1}
-	jsonData,_:=json.Marshal(user)
-	if err := r.ParseForm(); err != nil {
-        fmt.Println("errorだよ")
-    }
 
-    for k, v := range r.Form {
-        fmt.Printf("%v : %v\n", k, v)
-    }
-
-
-
-	// Formデータを取得.
-	email :=  r.FormValue("email")
-	password :=  r.FormValue("password")
-
-	fmt.Print(email)
-	fmt.Print(password)
-
-	hash:= Hash_password(password)
+	hash:= Hash_password(user.Password)
 	
 	if db, err := sql.Open("mysql", "light:light@tcp(database:3306)/database"); err!=nil {
 		log.Print(err)
 	}else{
 	// dbに登録
 	stmt,err := db.Prepare(`INSERT INTO students(password, email) VALUES (?,?)`)
-	// user:=User{Token:"1234567890abcdef",UserID:1}
-	// jsonData,err:=json.Marshal(user)
-	// w.WriteHeader(http.StatusOK)
-	// w.Write(jsonData)
 	if err != nil {
 		log.Print(err)
 		return nil
 	}
 
-	_, err = stmt.Exec(hash,email)
-	w.Write(jsonData)
-
-	// _, err = db.Exec(
-	// 	"INSERT INTO students(password, email) VALUES (?,?)",(hash,email)
-	// )
+	_, err = stmt.Exec(hash,user.Email)
 
 	if err != nil {
 		return nil
 	}
 	defer db.Close()
 
-
 	}
-	
-
-
-
 		return nil
 	
 }

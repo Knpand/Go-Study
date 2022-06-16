@@ -12,7 +12,7 @@ RUN go install github.com/cosmtrek/air@latest
 # RUN go build -o /go/bin/air github.com/cosmtrek/air
 
 #air導入によりgoのホットリロードが可能
-# CMD ["air"]
+CMD ["air"]
 
 
 # /bin/ash に入る
