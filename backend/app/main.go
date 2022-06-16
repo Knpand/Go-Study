@@ -10,6 +10,7 @@ import (
 	"app/handler"
 	"golang.org/x/crypto/bcrypt"
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"	//これをimportしないとDB接続できない
 	// "app/middleware"
 )
 
@@ -44,9 +45,9 @@ var tasks = []Task{{
 
 func handler1(w http.ResponseWriter, r *http.Request) {
 	//CORSの設定
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set( "Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS" )
+	// w.Header().Set("Access-Control-Allow-Headers", "*")
+	// w.Header().Set("Access-Control-Allow-Origin", "*")
+	// w.Header().Set( "Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS" )
 	fmt.Print("checkpoint")
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
@@ -84,31 +85,61 @@ func login_handler(w http.ResponseWriter, r *http.Request) error{
 }
 
 func signup_handler(w http.ResponseWriter, r *http.Request) error{
-	fmt.Print("checkpoint")
+	h := r.Header
+	fmt.Fprintln(w, h)
+	fmt.Print("checkpoint1")
+	user:=User{Token:"1234567890abcdef",UserID:1}
+	jsonData,_:=json.Marshal(user)
+	if err := r.ParseForm(); err != nil {
+        fmt.Println("errorだよ")
+    }
 
-	db, err := sql.Open("mysql", "light:light@tcp(localhost:3306)/database")
+    for k, v := range r.Form {
+        fmt.Printf("%v : %v\n", k, v)
+    }
+
+
+
 	// Formデータを取得.
 	email :=  r.FormValue("email")
 	password :=  r.FormValue("password")
 
+	fmt.Print(email)
+	fmt.Print(password)
+
 	hash:= Hash_password(password)
-	fmt.Print("checkpoint")
+	
+	if db, err := sql.Open("mysql", "light:light@tcp(database:3306)/database"); err!=nil {
+		log.Print(err)
+	}else{
 	// dbに登録
-	_, err = db.Exec(
-		"INSERT INTO students(password, email) VALUES (?,?)",
-		hash,
-		email,
-	)
+	stmt,err := db.Prepare(`INSERT INTO students(password, email) VALUES (?,?)`)
+	// user:=User{Token:"1234567890abcdef",UserID:1}
+	// jsonData,err:=json.Marshal(user)
+	// w.WriteHeader(http.StatusOK)
+	// w.Write(jsonData)
+	if err != nil {
+		log.Print(err)
+		return nil
+	}
+
+	_, err = stmt.Exec(hash,email)
+	w.Write(jsonData)
+
+	// _, err = db.Exec(
+	// 	"INSERT INTO students(password, email) VALUES (?,?)",(hash,email)
+	// )
 
 	if err != nil {
-		user:=User{Token:"1234567890abcdef",UserID:1}
-		jsonData,_:=json.Marshal(user)
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonData)
-		defer db.Close()
 		return nil
 	}
 	defer db.Close()
+
+
+	}
+	
+
+
 
 		return nil
 	

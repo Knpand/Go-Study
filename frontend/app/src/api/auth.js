@@ -26,13 +26,14 @@ export default {
       .catch(error => { throw error })
   },
   signup: (authInfo) => {
-    console.log("signup check")
-    console.log(authInfo)
-    config.method = 'post'
-    config.data = authInfo
-    config.url = 'http://localhost:5050/signup'
+    console.log("signup check1")
+    console.log(authInfo.email)
+    var params = new URLSearchParams();
+    params.append("email",authInfo.email)
+    params.append("password",authInfo.password)
 
-    return axios.request(config)
+
+    return axios.post(`http://localhost:5050/signup`,params)
       .then(res => {
         console.log("res check")
         console.log(res)
@@ -40,6 +41,7 @@ export default {
     })
       .catch(error => { throw error })
   },
+
   logout: () => {
     config.method = 'post'
     return axios.request(config)

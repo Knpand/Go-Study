@@ -5,6 +5,7 @@ import "app/middleware"
 
 func Handle(handlers ...func(w http.ResponseWriter, r *http.Request) error) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		middleware.CorsMiddleware(w)
 		middleware.AllowOptionsMiddleware(w, r)
 		middleware.GetandPostMiddleware(w, r)

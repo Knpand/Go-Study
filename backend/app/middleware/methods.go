@@ -39,6 +39,6 @@ func GetandPostMiddleware(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "DELATE" {
 		return nil
 	}
-	w.WriteHeader(http.StatusMethodNotAllowed)
+	// w.WriteHeader(http.StatusMethodNotAllowed)
 	return errors.New("GET OR POST NOT ALLOWED")
 }
