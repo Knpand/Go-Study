@@ -7,7 +7,6 @@ import (
 // そうしないとPUTやDELETEのような非単純リクエストが実行されない
 func AllowOptionsMiddleware(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
 		return nil
 	}
 	return nil

@@ -1,29 +1,32 @@
 <template>
-  <div class="signup">
-    <div class="form-item">
-      <label for="email">Email</label>
+  <main class="form-register">
+    <form>
+      <h1 class="h3 mb-3 fw-normal">Please Register</h1>
       <input
-        id="email"
-        autocomplete="off"
-        type="text"
+        v-model="name"
+        class="form-control"
+        placeholder="Name"
+        required>
+      <input
         v-model="email"
-      >
-    </div>
-    <div class="form-item">
-      <label for="password">Password</label>
+        type="email"
+        class="form-control"
+        placeholder="Email"
+        required>
+ 
       <input
-        id="password"
-        autocomplete="off"
-        type="password"
         v-model="password"
-      >
-    </div>
-    <div class="form-item">
-      <button class="Signup" @click="handle1()">Signup</button>
-    </div>
-  </div>
+        type="password"
+        class="form-control"
+        placeholder="Password"
+        required>
+ 
+      <button
+        class="w-100 btn btn-lg btn-primary"
+         @click="handle1()" >Submit</button>
+    </form>
+  </main>
 </template>
-
 <script>
 import { defineComponent } from 'vue';
 
@@ -31,6 +34,7 @@ export default defineComponent({
   name: 'SignupForm',
   data () {
     return {
+      name:'',
       email: '',
       password: ''
     }
@@ -46,6 +50,7 @@ export default defineComponent({
     handle1 () {
       return this.signup({
         'user': {
+          'name':this.name,
           'email': this.email,
           'password': this.password,
         }
@@ -55,25 +60,37 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-.form-item {
-  margin: 0 auto;
-  text-align: center;
+<style>
+.form-register {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
 }
-
-label {
-  display: block;
+ 
+.form-register .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
 }
-
-input {
-  width: 50%;
-  padding: .5em;
-  font: inherit;
+.form-register .form-control:focus {
+  z-index: 2;
 }
-
-button {
-  padding: 0.5em;
-  margin: 1em;
+.form-register input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
 }
+.form-register input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+ 
 </style>
+
+
+
+

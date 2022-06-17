@@ -16,8 +16,10 @@ export default {
     console.log(authInfo)
     config.method = 'post'
     config.data = authInfo
-
-    return axios.request(config)
+    var params = new URLSearchParams();
+    params.append("email",authInfo.email)
+    params.append("password",authInfo.password)
+    return axios.post(`http://localhost:5050`,params,{ withCredentials: true })
       .then(res => {
         console.log("res check")
         console.log(res)
@@ -27,13 +29,15 @@ export default {
   },
   signup: (authInfo) => {
     console.log("signup check1")
-    console.log(authInfo.email)
+    console.log(authInfo.name)
     var params = new URLSearchParams();
+    params.append("name",authInfo.name)
     params.append("email",authInfo.email)
     params.append("password",authInfo.password)
+    console.log(params)
 
 
-    return axios.post(`http://localhost:5050/signup`,params)
+    return axios.post(`http://localhost:5050/signup`,params,{ withCredentials: true })
       .then(res => {
         console.log("res check")
         console.log(res)
@@ -41,6 +45,7 @@ export default {
     })
       .catch(error => { throw error })
   },
+
 
   logout: () => {
     config.method = 'post'

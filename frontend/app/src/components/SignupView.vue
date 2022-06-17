@@ -20,7 +20,7 @@ export default defineComponent({
         console.log(authInfo)
       return this.$store.dispatch('signup', authInfo)
         .then(() => {
-          this.$router.push({ path: '/' })
+          this.$router.push({ path: '/login' })
         })
         .catch(err => { throw err })
     }

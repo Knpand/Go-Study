@@ -6,8 +6,17 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"strconv"
 	"time"
+	"net/http"
+	"log"
 )
 
+type Claims struct {
+	jwt.StandardClaims
+}
+
+
+// h = r.Header
+// log.Println(w, h)
 func CreateToken(userID int)(string,error){
 	// JWT
 	claims := jwt.StandardClaims{
@@ -23,4 +32,57 @@ func CreateToken(userID int)(string,error){
 	return token,nil
 	
 
+}
+
+func SetCookies(w http.ResponseWriter, r *http.Request,token string) {
+	log.Print("start set jwt")
+	log.Print(token)
+	log.Print(r.Host)
+	cookie := &http.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24),
+		Path:     "/",
+		Secure:   true,
+		Domain:   "localhost",
+		SameSite: http.SameSiteNoneMode,
+		// HttpOnly: true,
+	}
+
+	http.SetCookie(w, cookie)
+
+	log.Print("complete set jwt")
+}
+
+func ReSetCookies(w http.ResponseWriter, r *http.Request,token string) {
+	cookie := &http.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(-time.Hour),
+		Path:     "/",
+		HttpOnly: true,
+	}
+	log.Print("set cookie")
+	http.SetCookie(w, cookie)
+
+}
+
+func JwtCheck(w http.ResponseWriter, r *http.Request) string {
+	h := r.Header
+	log.Println(w, h)
+	// CookieからJWTを取得
+	cookie, err := r.Cookie("jwt")
+	if err != nil{
+		log.Print("cookie jwt check err")
+	}else{
+		// token取得
+		token, _ := jwt.ParseWithClaims(cookie.Value, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+			return []byte("secret"), nil
+		})
+		claims := token.Claims.(*Claims)
+		id := claims.Issuer
+		
+		return id
+	}
+	return ""
 }
