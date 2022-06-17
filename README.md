@@ -1,9 +1,9 @@
-# ログインページの作成
+# jwt 認証を用いたPhoto Galleryアプリを作ってみる
 
-## # 環境構築
-
+## # UI
+![TE](/UI.png)
+UIのセンスなんとかしたい．．．
 ### ## 導入
-
 以下を順に実行する．
 ```
 $ git clone https://github.com/Knpand/Go-Study.git

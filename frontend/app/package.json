@@ -10,8 +10,11 @@
   "dependencies": {
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
+    "material-icons": "^1.11.2",
     "vue": "^3.2.13",
     "vue-router": "^4.0.16",
+    "vuesax": "^3.12.2",
+    "vuestic-ui": "^1.4.1",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
