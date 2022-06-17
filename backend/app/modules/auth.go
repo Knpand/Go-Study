@@ -15,8 +15,7 @@ type Claims struct {
 }
 
 
-// h = r.Header
-// log.Println(w, h)
+
 func CreateToken(userID int)(string,error){
 	// JWT
 	claims := jwt.StandardClaims{
@@ -36,8 +35,7 @@ func CreateToken(userID int)(string,error){
 
 func SetCookies(w http.ResponseWriter, r *http.Request,token string) {
 	log.Print("start set jwt")
-	log.Print(token)
-	log.Print(r.Host)
+
 	cookie := &http.Cookie{
 		Name:     "jwt",
 		Value:    token,
@@ -67,13 +65,15 @@ func ReSetCookies(w http.ResponseWriter, r *http.Request,token string) {
 
 }
 
-func JwtCheck(w http.ResponseWriter, r *http.Request) string {
-	h := r.Header
-	log.Println(w, h)
+func JwtCheck(w http.ResponseWriter, r *http.Request)(string ,error){
+	// h := r.Header
+	// log.Println(w, h)
+
 	// CookieからJWTを取得
 	cookie, err := r.Cookie("jwt")
 	if err != nil{
 		log.Print("cookie jwt check err")
+		return "" ,err
 	}else{
 		// token取得
 		token, _ := jwt.ParseWithClaims(cookie.Value, &Claims{}, func(token *jwt.Token) (interface{}, error) {
@@ -82,7 +82,6 @@ func JwtCheck(w http.ResponseWriter, r *http.Request) string {
 		claims := token.Claims.(*Claims)
 		id := claims.Issuer
 		
-		return id
+		return id,nil
 	}
-	return ""
 }

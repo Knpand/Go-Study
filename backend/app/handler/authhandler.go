@@ -18,10 +18,10 @@ import (
 func Login_handler(w http.ResponseWriter, r *http.Request) error{
 	// Formデータを取得
 	var user models.User
+	user.Email=r.FormValue("email")
+	user.Password=r.FormValue("password")
 	var user_id int
 	var db_userpassword string
-	json.NewDecoder(r.Body).Decode(&user)
-
 	if db, err := sql.Open("mysql", "light:light@tcp(database:3306)/database"); err!=nil {
 		log.Print(err)
 	}else{
@@ -55,18 +55,10 @@ func Login_handler(w http.ResponseWriter, r *http.Request) error{
 			}
 		//cookieの設定
 		modules.SetCookies(w,r,token)
-		// cookie := &http.Cookie{
-		// 	Name: "sample_name",
-		// 	Value: "sample_value",
-		// 	HttpOnly: true,
-		//   }
-		//   http.SetCookie(w, cookie)
-
+	
 		json, _ := json.Marshal(response)
 		w.Header().Set("Content-Type","application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
-		h := r.Header
-	    log.Println(w, h)
 		w.Write(json)
 		}	
 
@@ -130,8 +122,12 @@ func Logout_handler(w http.ResponseWriter, r *http.Request) error{
 
 func JwtCheck_handler(w http.ResponseWriter, r *http.Request) error{
 	// CookieからJWTを参照し，Useridを取得
-	user_id_jwt:=modules.JwtCheck(w,r)
-
+	user_id_jwt,err:=modules.JwtCheck(w,r)
+	if err!= nil{
+		w.WriteHeader(403)
+		return nil
+	}
+	log.Print(user_id_jwt)
 	var user models.User
 	
 	if db, err := sql.Open("mysql", "light:light@tcp(database:3306)/database"); err!=nil {
@@ -149,7 +145,7 @@ func JwtCheck_handler(w http.ResponseWriter, r *http.Request) error{
 				Status: "ok",
 				Name: user.Name,
 			  }
-			log.Print("aaaaaaaaaaaa")
+			
 			json, _ := json.Marshal(response)
 			w.WriteHeader(200)
 			w.Header().Set("Content-Type","application/json; charset=utf-8")

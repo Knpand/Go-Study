@@ -35,8 +35,6 @@ export default {
     params.append("email",authInfo.email)
     params.append("password",authInfo.password)
     console.log(params)
-
-
     return axios.post(`http://localhost:5050/signup`,params,{ withCredentials: true })
       .then(res => {
         console.log("res check")
@@ -45,7 +43,6 @@ export default {
     })
       .catch(error => { throw error })
   },
-
 
   logout: () => {
     config.method = 'post'

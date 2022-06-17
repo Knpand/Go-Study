@@ -32,7 +32,7 @@ export default defineComponent({
       .then(res => {
         console.log("res check")
         console.log(res)
-        this.message = `Hi ${res.name} `
+        this.message = `Hi ${res.data.name} `
     })
       .catch(error => { throw error })
 
