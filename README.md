@@ -19,5 +19,11 @@ $ docker-compose up -d
 frontend:Vue.js (port=80)
 backend:Go (port=5050)
 ```
+
+### ## 目標
+-CORSの理解を進める
+-いつもsessionの認証だからJWT認証サーバたててみる
+-可能な限りサードパーティ製のパッケージ使わない
+
 #### 勉強内容ごとにbranch切る
 現状はfrontからbackの5050/taskaにリクエスト飛ばしてもCORSではじかれる
