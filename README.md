@@ -5,7 +5,6 @@
 ### ## 導入
 
 以下を順に実行する．
-保険のため、mainブランチへのpushはできないようにする．
 ```
 $ git clone https://github.com/Knpand/Go-Study.git
 $ cd Go-Study
