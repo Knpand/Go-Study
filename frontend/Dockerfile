@@ -6,4 +6,4 @@ RUN yarn global add vuesax
 RUN yarn global add material-icons
 
 # CMD ["yarn","add","@vue/cli"]
-CMD ["yarn","serve"]
+# CMD ["yarn","serve"]
